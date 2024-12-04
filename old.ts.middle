@@ -1,0 +1,26 @@
+// // middleware.ts
+// import { auth } from "./auth"
+// // import { getServerSession } from "next-auth";
+// import { authOptions } from "./app/api/auth/[...nextauth]/route";
+// import {NextResponse} from "next/server";
+// export default auth(async (req) => {
+//     // const session = await getServerSession(req, authOptions);
+// // || !!session;
+//     const isLoggedIn = !!req.auth
+//     const isAuthPage = req.nextUrl.pathname.startsWith('/chat') ||
+//         req.nextUrl.pathname.startsWith('/chat');
+//
+//     if (isAuthPage && isLoggedIn) {
+//         return Response.redirect(new URL('/chat', req.url));
+//     }
+//
+//     if (!isLoggedIn && !isAuthPage) {
+//         return Response.redirect(new URL('/chat', req.url));
+//     }
+//     return NextResponse.next();
+// })
+//
+//
+// export const config = {
+//     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+// }
