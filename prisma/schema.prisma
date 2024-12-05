@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model analyser {
+  id            String    @id @db.Uuid
+  user_id       String    @db.Uuid
+  name          String?   @db.VarChar(255)
+  type          String?   @db.VarChar(255)
+  connection_id String    @db.Uuid
+  meta_data     Json?     @db.Json
+  is_active     Boolean?
+  summary       Json?     @db.Json
+  created_at    DateTime? @db.Timestamp(6)
+  modified_at   DateTime? @db.Timestamp(6)
+}
+
+model analyser_conversation_memory {
+  id           Int      @id @default(autoincrement())
+  name         String?  @db.VarChar(255)
+  session_id   String?  @db.VarChar(255)
+  user_input   String?
+  bot_response String?
+  timestamp    DateTime @default(now()) @db.Timestamp(6)
+  user_id      String?  @db.Uuid
+  analyser_id  String?  @db.Uuid
+}
+
+model connections {
+  id          String    @id @db.Uuid
+  user_id     String?   @db.Uuid
+  name        String    @db.VarChar(255)
+  type        String    @db.VarChar(255)
+  meta_data   Json?     @db.Json
+  is_active   Boolean?
+  created_at  DateTime? @db.Timestamp(6)
+  modified_at DateTime? @db.Timestamp(6)
+}
+
+model conversation_memory {
+  id            Int      @id @default(autoincrement())
+  name          String?  @db.VarChar(255)
+  session_id    String?  @db.VarChar(255)
+  user_input    String?
+  bot_response  String?
+  timestamp     DateTime @default(now()) @db.Timestamp(6)
+  user_id       String?  @db.Uuid
+  connection_id String?  @db.Uuid
+}
+
+
+model web_analyser_conversation_memory {
+  id              Int      @id @default(autoincrement())
+  name            String?  @db.VarChar(255)
+  session_id      String?  @db.VarChar(255)
+  user_input      String?
+  bot_response    String?
+  timestamp       DateTime @default(now()) @db.Timestamp(6)
+  user_id         String?  @db.Uuid
+  web_analyser_id String?  @db.Uuid
+}
+
+model webanalyser {
+  id          String    @id @db.Uuid
+  user_id     String    @db.Uuid
+  name        String?   @db.VarChar(255)
+  meta_data   Json?     @db.Json
+  is_active   Boolean?
+  summary     Json?     @db.Json
+  created_at  DateTime? @db.Timestamp(6)
+  modified_at DateTime? @db.Timestamp(6)
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  role      String     @default("user")
+  createdAt DateTime   @default(now())
+  status    String     @default("active")
+  updatedAt DateTime   @updatedAt
+  logs      Log[]      @relation("UserLogs")
+  documents Document[]
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  level     String
+  action    String
+  details   String
+  userId    String
+  user      User     @relation("UserLogs", fields: [userId], references: [id])
+  resource  String
+  metadata  Json?
+  timestamp DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  size      Int
+  status    String   @default("active")
+  location  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
