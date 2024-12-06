@@ -36,6 +36,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {PrismLight, Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula, dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { TopMenuBar } from "../layout/top-menubar";
 interface Message {
   id: string;
   content: string;
@@ -43,7 +44,10 @@ interface Message {
   timestamp: Date;
 }
 
-export default function ClaudeChat() {
+interface ChatInterfaceProps {
+  chatId?: string;
+}
+export default function ClaudeChat(props: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [showTip, setShowTip] = useState(true);
@@ -90,8 +94,10 @@ export default function ClaudeChat() {
 
   return (
     <div className="relative flex h-screen flex-col">
+      <TopMenuBar />
+      <div className="relative flex flex-1 flex-col overflow-hidden">
       {/* Tip Alert */}
-      {showTip && (
+      {!showTip && (
         <Alert className="mx-4 mt-4 bg-indigo-950 text-white">
           <AlertDescription className="flex items-center justify-between">
             <span>
@@ -119,66 +125,80 @@ export default function ClaudeChat() {
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-8">
           {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex items-start gap-4 ${
-                message.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              {message.sender === "assistant" ? (
-                <div className="h-6 w-6 rounded-full bg-primary" />
-              ) : (
-                <div className="h-6 w-6 rounded-full bg-gray-400" />
-              )}
-              <div
-                className={`flex-1 ${message.sender === "user" ? "text-right" : ""}`}
-              >
-                <ReactMarkdown
-                  components={{
-                    code: ({ node, className, children, ...props }) => {
-                      const match = /language-(\w+)/.exec(className || "");
-                      return match ? (
-                        <SyntaxHighlighter
-                          children={String(children).replace(/\n$/, "")}
-                          style={darcula}
-                          language={match[1]}
-                          PreTag="div"
-                          {...props}
-                        />
-                      ) : (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      );
-                    },
-                  }}
-                  remarkPlugins={[remarkGfm]}
-                  className="whitespace-pre-wrap break-words"
-                >
-                  {message.content}
-                </ReactMarkdown>
-                {message.sender === "assistant" && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleCopyMessage(message.content)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <ThumbsUp className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <ThumbsDown className="h-4 w-4" />
-                    </Button>
+              <div key={message.id} className="flex items-start gap-4">
+                <div className={`flex w-full gap-3 ${message.sender === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    {message.sender === "assistant" ? (
+                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                          C
+                        </div>
+                    ) : (
+                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                          U
+                        </div>
+                    )}
                   </div>
-                )}
+
+                  {/* Message Bubble */}
+                  <div className={`flex flex-col gap-2 w-full max-w-[80%]`}>
+                    <div
+                        className={`rounded-lg p-4 ${
+                            message.sender === "user"
+                                ? "bg-primary text-primary-foreground ml-auto"
+                                : "bg-muted"
+                        }`}
+                    >
+                      <ReactMarkdown
+                          components={{
+                            code: ({ node, className, children, ...props }) => {
+                              const match = /language-(\w+)/.exec(className || "");
+                              return match ? (
+                                  <SyntaxHighlighter
+                                      children={String(children).replace(/\n$/, "")}
+                                      style={message.sender === "user" ? dark : darcula}
+                                      language={match[1]}
+                                      PreTag="div"
+                                      {...props}
+                                  />
+                              ) : (
+                                  <code className={className} {...props}>
+                                    {children}
+                                  </code>
+                              );
+                            },
+                          }}
+                          remarkPlugins={[remarkGfm]}
+                          className="whitespace-pre-wrap break-words"
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+
+                    {/* Message Actions */}
+                    {message.sender === "assistant" && (
+                        <div className="flex items-center gap-2">
+                          <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleCopyMessage(message.content)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <RotateCcw className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <ThumbsUp className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <ThumbsDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
           ))}
         </div>
       </ScrollArea>
@@ -274,6 +294,7 @@ export default function ClaudeChat() {
       >
         <ArrowUp className="h-4 w-4" />
       </Button>
+    </div>
     </div>
   );
 }

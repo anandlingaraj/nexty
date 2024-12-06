@@ -172,12 +172,13 @@ const Page: NextPage = () => {
                     <CardFooter className="flex flex-col gap-4">
                         <div className="text-sm text-gray-500 text-center">
                             Already have an account?{" "}
-                            <button
+                            <Button
+                                variant={"ghost"}
                                 onClick={handleLoginClick}
                                 className="text-indigo-600 hover:text-indigo-500 font-medium"
                             >
-                                Sign up
-                            </button>
+                                Sign In
+                            </Button>
                         </div>
                     </CardFooter>
                 </Card>
