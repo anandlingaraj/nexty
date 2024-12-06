@@ -153,7 +153,7 @@ export default function AccessControlPage() {
                                             Add Role
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent>
+                                    <DialogContent aria-describedby={``}>
                                         <DialogHeader>
                                             <DialogTitle>Create New Role</DialogTitle>
                                             <DialogDescription>

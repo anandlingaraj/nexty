@@ -3,63 +3,66 @@
 import {useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserTable } from "@/components/admin/users/components//user-table";
+import { UserTable } from "@/components/admin/users/components/user-table";
 import { CreateUserForm } from "@/components/admin/users/components/create-user-form";
-import { BulkUploadForm } from "@/components/admin/users/components//bulk-upload-form";
+import { BulkUploadForm } from "@/components/admin/users/components/bulk-upload-form";
 import { User } from "./types";
-
+import { deleteUserAction,createUserAction, fetchUsersAction } from './actions';
+import { toast } from '@/hooks/use-toast';
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const response = await fetch('/app/api/users/read');
-            const data = await response.json();
+    const [loading, setLoading] = useState(true);
+
+    const fetchUsers = async () => {
+        try {
+            const data = await fetchUsersAction();
             setUsers(data);
-        };
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchUsers();
     }, []);
 
     const createUser = async (userData: User) => {
         try {
-        const response = await fetch('/app/api/users/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        });
-        const newUser = await response.json();
-        setUsers([...users, newUser]);
+            await createUserAction(userData);
+            await fetchUsers();
+            toast({
+                title: "Success",
+                description: "User created successfully",
+            });
         } catch (error) {
             console.error('Error creating user:', error);
-           
+            toast({
+                title: "Error",
+                description: "Failed to create user",
+                variant: "destructive",
+            });
         }
     };
 
-    const updateUser = async (id: string, userData: Partial<User>) => {
-        const response = await fetch('/app/api/users/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id, ...userData }),
-        });
-        const updatedUser = await response.json();
-        setUsers(
-            users.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-        );
-    };
 
     const deleteUser = async (id: string) => {
-        await fetch('/api/users', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }),
-        });
-        setUsers(users.filter((user) => user.id !== id));
+        try {
+            await deleteUserAction(id);
+            setUsers(users.filter((user) => user.id !== id));
+            toast({
+                title: "Success",
+                description: "User deleted successfully",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete user",
+                variant: "destructive",
+            });
+        }
     };
 
 
@@ -80,7 +83,13 @@ export default function AdminUsersPage() {
                             <CardTitle>Users</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <UserTable users={users} onDelete={deleteUser} />
+                            {loading ? (
+                                <div className="flex items-center justify-center p-4">
+                                    Loading users...
+                                </div>
+                            ) : (
+                                <UserTable users={users} onDeleteAction={deleteUser} onUpdateAction={fetchUsers}  />
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>

@@ -1,4 +1,3 @@
-// components/popup-menu/user-menu.tsx
 'use client';
 
 import React from 'react';
@@ -16,11 +15,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuLabel,
     DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 import {
     Settings,
     Moon,
+    Sun,
+    Monitor,
     HelpCircle,
     Download,
     LogOut,
@@ -28,10 +32,18 @@ import {
     ExternalLink,
     ChevronDown
 } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 export default function UserMenu() {
     const email = "anand.lingaraj@gmail.com";
     const initials = email.substring(0, 1).toUpperCase();
+    const router = useRouter();
+    const { theme, setTheme } = useTheme();
+    const [themeOpen, setThemeOpen] = React.useState(false);
+
+    const handleAdminPage = () => {
+        router.push('/admin/dashboard');
+    };
 
     return (
         <div className="fixed bottom-4 left-4 z-50">
@@ -62,40 +74,37 @@ export default function UserMenu() {
                     </SheetHeader>
 
                     <div className="flex flex-col p-2">
-                        <Button variant="ghost" className="justify-between">
+                        <Button variant="ghost" className="justify-between" onClick={handleAdminPage}>
                             Settings
                             <ChevronRight className="h-4 w-4" />
                         </Button>
 
-                        <Button variant="ghost" className="justify-between">
-                            Appearance
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-
-                        <Button variant="ghost">
-                            Feature Preview
-                        </Button>
-
-                        <Button variant="ghost" className="justify-between">
-                            Learn more
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-
-                        <div className="my-2 border-t" />
-
-                        <Button variant="ghost">
-                            Get help
-                        </Button>
-
-                        <Button variant="ghost" className="justify-between">
-                            Help Center
-                            <ExternalLink className="h-4 w-4" />
-                        </Button>
-
-                        <Button variant="ghost" className="justify-between">
-                            Download Apps
-                            <ExternalLink className="h-4 w-4" />
-                        </Button>
+                        <DropdownMenu open={themeOpen} onOpenChange={setThemeOpen}>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="justify-between">
+                                    Appearance
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                                    <DropdownMenuRadioItem value="light" className="gap-2">
+                                        <Sun className="h-4 w-4" />
+                                        Light
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="dark" className="gap-2">
+                                        <Moon className="h-4 w-4" />
+                                        Dark
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="system" className="gap-2">
+                                        <Monitor className="h-4 w-4" />
+                                        System
+                                    </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
                         <Button variant="ghost" className="text-red-600 hover:text-red-600 hover:bg-red-100">
                             Log Out

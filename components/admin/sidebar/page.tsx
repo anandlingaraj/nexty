@@ -12,7 +12,8 @@ import {
     Files,
     AlertCircle,
     BarChart3,
-    Lock
+    Lock,
+    MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -43,11 +44,11 @@ const sidebarNavItems = [
         href: "/admin/analytics",
         icon: BarChart3
     },
-    // {
-    //     title: "System Settings",
-    //     href: "/admin/settings",
-    //     icon: Settings
-    // },
+    {
+        title: "Chat",
+        href: "/chat",
+        icon: MessageSquare
+    },
     {
         title: "Access Control",
         href: "/admin/access",

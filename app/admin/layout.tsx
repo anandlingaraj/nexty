@@ -1,14 +1,7 @@
 import SidebarNav from "@/components/admin/sidebar/page";
-
 import {
-    Users,
-    Database,
     Settings,
-    LayoutDashboard,
-    Files,
     AlertCircle,
-    BarChart3,
-    Lock
 } from "lucide-react";
 import React from "react";
 
