@@ -1,8 +1,8 @@
 // components/chat/chat-sidebar.tsx
 "use client";
 
-import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import {useEffect, useState } from "react";
+import { useRouter, useParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -10,12 +10,13 @@ import {
   Plus,
   MessageSquare,
   Clock,
-  Trash2,
-  ChevronLeft,
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserMenu from "../popup-menu/user-menu";
+import { Chat, Conversation } from "@/types/chat";
+import { fetchConversationsAction } from "@/app/chat/actions";
+import { format } from "date-fns";
 
 interface ChatSession {
   id: string;
@@ -28,20 +29,26 @@ export default function ChatSidebar() {
   const router = useRouter();
   const params = useParams();
   const [isOpen, setIsOpen] = useState(true);
+  const pathname = usePathname();
   const [sessions, setSessions] = useState<ChatSession[]>([
-    {
-      id: "1",
-      title: "Chat about React Performance",
-      lastMessage: "How can I optimize my React app?",
-      timestamp: new Date(),
-    },
-    {
-      id: "2",
-      title: "Next.js API Routes",
-      lastMessage: "Implementing API routes in Next.js",
-      timestamp: new Date(),
-    },
   ]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        const data = await fetchConversationsAction();
+        setConversations(data);
+      } catch (error) {
+        console.error('Error loading conversations:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadConversations();
+  }, []);
 
   const createNewChat = () => {
     const newChatId = Date.now().toString();
@@ -81,37 +88,41 @@ export default function ChatSidebar() {
           <div className="space-y-2 p-2">
             <div className="py-2">
               <h3 className="mb-2 px-2 text-sm font-semibold">Recent</h3>
-              {sessions.map((session) => (
-                <div  key={session.id}>
+              {loading ? (
+                  <div className="flex items-center justify-center p-4">
+                    <span className="text-sm text-muted-foreground">Loading conversations...</span>
+                  </div>
+              ) : (
+                  <div className="space-y-2">
+              {conversations.map((conversation) => (
                   <Button
-                    key={session.id}
-                    variant="ghost"
-                    className={cn(
-                      "group relative w-full justify-start text-left",
-                      params?.id === session.id && "bg-accent",
-                    )}
-                    onClick={() => router.push(`/chat/${session.id}`)}
+                      key={conversation.id}
+                      variant="ghost"
+                      className={cn(
+                          "w-full justify-start gap-2 rounded-lg p-3",
+                          pathname === `/chat/${conversation.session_id}` && "bg-muted"
+                      )}
+                      onClick={() => router.push(`/chat/${conversation.session_id}`)}
                   >
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <div className="flex flex-1 flex-col overflow-hidden">
-                      <span className="truncate font-medium">
-                        {session.title}
-                      </span>
-                      <span className="truncate text-xs text-muted-foreground">
-                        {session.lastMessage}
-                      </span>
+                    <MessageSquare className="h-4 w-4" />
+                    <div className="flex flex-col items-start overflow-hidden">
+                  <span className="text-sm font-medium">
+                    {conversation.name || 'New Chat'}
+                  </span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="line-clamp-1">
+                      {conversation.user_input || 'No messages yet'}
+                    </span>
+                        <span className="shrink-0">
+                      {format(new Date(conversation.timestamp), 'MMM d')}
+                    </span>
+                      </div>
                     </div>
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 hidden h-6 w-6 group-hover:flex"
-                    onClick={(e) => deleteSession(session.id, e)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
               ))}
+                  </div>
+              )}
+
             </div>
 
             <Separator />

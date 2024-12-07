@@ -1,22 +1,12 @@
 // hooks/useWebSocket.ts
+import {WebSocketMessage, WebSocketOptions } from '@/types/chat';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-interface WebSocketOptions {
-    reconnectAttempts?: number;
-    reconnectInterval?: number;
-    heartbeatInterval?: number;
-    onOpen?: (event: WebSocketEventMap['open']) => void;
-    onClose?: (event: WebSocketEventMap['close']) => void;
-    onError?: (event: WebSocketEventMap['error']) => void;
-    protocols?: string | string[];
-}
+
 
 type MessageHandler = (message: any) => void;
 
-interface WebSocketMessage {
-    type: string;
-    payload: any;
-}
+
 
 export function useWebSocket(url: string, options: WebSocketOptions = {}) {
     const [isConnected, setIsConnected] = useState(false);
@@ -36,7 +26,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         protocols,
     } = options;
 
-    // Initialize WebSocket connection
+
     const connect = useCallback(() => {
         try {
             webSocketRef.current = new WebSocket(url, protocols);
@@ -47,7 +37,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         }
     }, [url, protocols]);
 
-    // Initialize WebSocket event handlers
+
     const initializeWebSocket = useCallback(() => {
         if (!webSocketRef.current) return;
 
@@ -110,7 +100,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         if (handlers) {
             handlers.forEach((handler) => {
                 try {
-                    handler(message.payload);
+                    handler(message.content);
                 } catch (error) {
                     console.error('Error in message handler:', error);
                 }
@@ -137,6 +127,14 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
     }, []);
 
     // Send message helper
+    const query = useCallback((query: any) => {
+        if (webSocketRef.current?.readyState === WebSocket.OPEN) {
+            webSocketRef.current.send(JSON.stringify({ ...query }));
+        } else {
+            console.warn('WebSocket is not connected');
+        }
+    }, []);
+
     const send = useCallback((type: string, payload: any) => {
         if (webSocketRef.current?.readyState === WebSocket.OPEN) {
             webSocketRef.current.send(JSON.stringify({ type, payload }));
@@ -164,6 +162,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         lastMessage,
         subscribe,
         send,
+        query,
         // Helper methods
         on: subscribe,
         emit: send,

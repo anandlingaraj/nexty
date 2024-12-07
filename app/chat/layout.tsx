@@ -1,4 +1,4 @@
-import ChatSidebar from "@/components/chat/chat-sidebar";
+import ChatSidebar from "@/components/chat/ChatSidebar";
 import React from "react";
 
 export default function ChatLayout({
