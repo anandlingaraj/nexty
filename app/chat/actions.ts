@@ -69,7 +69,7 @@ export async function getSessionMessagesAction(
     sessionType: ConversationType
 ): Promise<Message[]> {
     try {
-
+        console.log("GRAB SESSUIB", userId, sessionId, sessionType)
         const table = sessionType === 'default' ? 'conversation_memory' :
             sessionType === 'analyser' ? 'analyser_conversation_memory' :
                 'web_analyser_conversation_memory';

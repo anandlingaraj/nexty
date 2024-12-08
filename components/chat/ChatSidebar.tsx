@@ -6,6 +6,7 @@ import { useRouter, useParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import  * as uuid from 'uuid';
 import {
   Plus,
   MessageSquare,
@@ -51,7 +52,7 @@ export default function ChatSidebar() {
   }, []);
 
   const createNewChat = () => {
-    const newChatId = Date.now().toString();
+    const newChatId = uuid.v4();
     router.push(`/chat/${newChatId}`);
   };
 

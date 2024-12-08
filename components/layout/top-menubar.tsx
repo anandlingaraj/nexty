@@ -21,12 +21,7 @@ export function TopMenuBar() {
     const {setTheme} = useTheme();
     const router = useRouter();
     const { data: session, status } = useSession();
-    //
-    // if (!session) {
-    //     router.push('/login');
-    //     return null;
-    // }
-
+    
 
     const handleLogout = async () => {
         await signOut({

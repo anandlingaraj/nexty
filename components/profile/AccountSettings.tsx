@@ -1,21 +1,44 @@
 'use client';
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Download, Trash2, Moon, Sun, Smartphone, Laptop, Monitor  } from "lucide-react";
+import {  Download, Trash2, Moon, Sun, Smartphone, Laptop, Monitor  } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { LogoutButton } from '../auth/logout-button';
+import { getLoginHistory } from '@/lib/login-history';
 
+interface RecentLogin{
+    device: string;
+    location: string;
+    ip: string;
+    timestamp: string;
+    icon: typeof Laptop | typeof Monitor | typeof Smartphone;
+    isCurrentDevice?: boolean;
+}
 const AccountSettings = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
-
+    const [loginHistory, setLoginHistory] = useState<RecentLogin[]>([])
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
         document.documentElement.classList.toggle('dark');
     };
+    if(loginHistory.length === 0){
+        setLoginHistory(prevState => [...prevState, ...recentLogins])
+    }
 
-    const recentLogins = [
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await getLoginHistory();
+                setLoginHistory(data);
+            } catch (error) {
+                console.error('Failed to fetch login history:', error);
+                // Handle error appropriately
+            }
+        })();
+    }, []);
+
+    const recentLogins: RecentLogin[] = [
         {
             device: "MacBook Pro",
             location: "San Francisco, US",
@@ -29,31 +52,34 @@ const AccountSettings = () => {
             location: "San Francisco, US",
             ip: "192.168.1.2",
             timestamp: "2024-12-07 09:15",
-            icon: Smartphone
+            icon: Smartphone,
+            isCurrentDevice: false
         },
         {
             device: "Windows Desktop",
             location: "San Francisco, US",
             ip: "192.168.1.3",
             timestamp: "2024-12-06 18:45",
-            icon: Monitor
+            icon: Monitor,
+            isCurrentDevice: false
         },
         {
             device: "iPad Pro",
             location: "New York, US",
             ip: "192.168.1.4",
             timestamp: "2024-12-05 11:30",
-            icon: Smartphone
+            icon: Smartphone,
+            isCurrentDevice: false
         },
         {
             device: "Chrome Browser",
             location: "Boston, US",
             ip: "192.168.1.5",
             timestamp: "2024-12-04 16:20",
-            icon: Monitor
+            icon: Monitor,
+            isCurrentDevice: false
         }
     ];
-    const handleCleanTokens=()=>{}
 
     return (
         <div className="min-h-screen p-8">
@@ -95,17 +121,13 @@ const AccountSettings = () => {
                                 <h2 className="text-xl">Log Out of All Devices</h2>
                             </div>
                             <LogoutButton/>
-                            {/*<Button variant="outline" className="flex items-center gap-2" onClick={handleCleanTokens}>*/}
-                            {/*    <LogOut className="h-4 w-4" />*/}
-                            {/*    Log Out*/}
-                            {/*</Button>*/}
                         </div>
 
                         {/* Recent Login Activity */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-medium text-muted-foreground">Recent Login Activity</h3>
                             <div className="space-y-3">
-                                {recentLogins.map((login, index) => {
+                                {loginHistory.map((login, index) => {
                                     const Icon = login.icon;
                                     return (
                                         <div key={index} className="flex items-start gap-4 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">

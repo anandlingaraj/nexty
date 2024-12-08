@@ -13,7 +13,7 @@ import { SessionProvider } from "next-auth/react";
 export default function ChatInterface(props: ChatInterfaceProps) {
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sessionId, setSessionId] = useState<string>(props.chatId || "cc5bfcc7-c84f-4482-a7b1-4b763fa2d27b");
+  const [sessionId, setSessionId] = useState<string>(props.chatId || "");
   const [errorMessage, setErrorMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentSession, setCurrentSession] = useState<SessionItem>({
@@ -101,7 +101,7 @@ export default function ChatInterface(props: ChatInterfaceProps) {
         // analyserId:currentSession.analyserId,
         userId: props.userId,
         sessionType: currentSession.sessionType,
-        name:"Sagittarius",
+        name:"",
         // docName: ''
       });
 
@@ -122,7 +122,6 @@ export default function ChatInterface(props: ChatInterfaceProps) {
       setLoading(true);
       const fileUrl = await uploadFileToS3(files[0], props.userId);
 
-      // Send file message through WebSocket
       send('file_message', {
         content: `File uploaded: ${files[0].name}`,
         sender: 'user',
