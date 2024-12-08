@@ -2,19 +2,20 @@ import { MessageContent } from "./MessageContent";
 import {Message} from '@/types/chat'
 interface AvatarProps {
     sender: "user" | "assistant";
+    className?: string;
 }
-export const Avatar: React.FC<AvatarProps> = ({ sender }) => {
+export const Avatar: React.FC<AvatarProps> = ({ sender, className }) => {
+    if (sender === 'assistant') {
+        return (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-medium text-white">
+                A
+            </div>
+        );
+    }
+
     return (
-        <div className="flex-shrink-0">
-            {sender === "assistant" ? (
-                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-                    C
-                </div>
-            ) : (
-                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                    U
-                </div>
-            )}
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800 text-sm font-medium text-neutral-900 dark:text-white">
+            U
         </div>
     );
 };
@@ -27,7 +28,7 @@ export const MessageBubble = ({ message, onCopy }: { message: Message; onCopy: (
                     <div
                         className={`rounded-lg p-4 ${
                             message.sender === "user"
-                                ? "bg-primary text-primary-foreground ml-auto"
+                                ? "bg-secondary text-primary-foreground ml-auto"
                                 : "bg-muted"
                         }`}
                     >

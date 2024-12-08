@@ -2,11 +2,7 @@
 import {WebSocketMessage, WebSocketOptions } from '@/types/chat';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-
-
 type MessageHandler = (message: any) => void;
-
-
 
 export function useWebSocket(url: string, options: WebSocketOptions = {}) {
     const [isConnected, setIsConnected] = useState(false);
@@ -15,6 +11,12 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
     const reconnectAttemptsRef = useRef(0);
     const messageHandlersRef = useRef<Map<string, Set<MessageHandler>>>(new Map());
     const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
 
     const {
         reconnectAttempts = 5,
@@ -23,11 +25,31 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         onOpen,
         onClose,
         onError,
+        onMessage,
         protocols,
     } = options;
 
-
+    const handleMessage = useCallback((event: MessageEvent) => {
+        try {
+            const message = JSON.parse(event.data);
+            // Get handlers for empty event type
+            const handlers = messageHandlersRef.current.get('');
+            if (handlers) {
+                handlers.forEach((handler) => {
+                    try {
+                        // Pass the entire parsed message
+                        handler(message);
+                    } catch (error) {
+                        console.error('Error in message handler:', error);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+        }
+    }, []);
     const connect = useCallback(() => {
+        if (!isClient || !url) return;
         try {
             webSocketRef.current = new WebSocket(url, protocols);
             initializeWebSocket();
@@ -35,7 +57,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
             console.error('WebSocket connection error:', error);
             handleReconnect();
         }
-    }, [url, protocols]);
+    }, [url, protocols, isClient]);
 
 
     const initializeWebSocket = useCallback(() => {
@@ -59,15 +81,30 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         };
 
         webSocketRef.current.onmessage = (event) => {
+            console.log("Raw WebSocket message:", event.data);
             try {
-                const message: WebSocketMessage = JSON.parse(event.data);
+                const message = JSON.parse(event.data);
+                console.log("Parsed WebSocket message:", message);
                 setLastMessage(message);
-                handleMessage(message);
+                handleMessage(event); 
             } catch (error) {
                 console.error('Error parsing WebSocket message:', error);
             }
         };
-    }, [onOpen, onClose, onError]);
+
+
+
+
+        // webSocketRef.current.onmessage = (event) => {
+        //     try {
+        //         const message: WebSocketMessage = JSON.parse(event.data);
+        //         setLastMessage(message);
+        //         handleMessage(message);
+        //     } catch (error) {
+        //         console.error('Error parsing WebSocket message:', error);
+        //     }
+        // };
+    }, [onOpen, onClose, onError, onMessage, handleMessage]);
 
     // Reconnection logic
     const handleReconnect = useCallback(() => {
@@ -95,18 +132,20 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
     }, [heartbeatInterval]);
 
     // Message handling
-    const handleMessage = useCallback((message: WebSocketMessage) => {
-        const handlers = messageHandlersRef.current.get(message.type);
-        if (handlers) {
-            handlers.forEach((handler) => {
-                try {
-                    handler(message.content);
-                } catch (error) {
-                    console.error('Error in message handler:', error);
-                }
-            });
-        }
-    }, []);
+    // const handleMessage = useCallback((message: WebSocketMessage) => {
+    //     const handlers = messageHandlersRef.current.get(message.type);
+    //     if (handlers) {
+    //         handlers.forEach((handler) => {
+    //             try {
+    //                 handler(message.content);
+    //             } catch (error) {
+    //                 console.error('Error in message handler:', error);
+    //             }
+    //         });
+    //     }
+    // }, []);
+
+
 
     // Subscribe to message types
     const subscribe = useCallback((type: string, handler: MessageHandler) => {
@@ -145,7 +184,10 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
 
     // Initial connection
     useEffect(() => {
-        connect();
+        
+        if (isClient) {
+            connect();
+        }
 
         return () => {
             if (reconnectTimeoutRef.current) {
@@ -155,7 +197,7 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
                 webSocketRef.current.close();
             }
         };
-    }, [connect]);
+    }, [connect, isClient]);
 
     return {
         isConnected,
@@ -163,8 +205,9 @@ export function useWebSocket(url: string, options: WebSocketOptions = {}) {
         subscribe,
         send,
         query,
+        isClient,
         // Helper methods
         on: subscribe,
-        emit: send,
+        emit: query,
     };
 }

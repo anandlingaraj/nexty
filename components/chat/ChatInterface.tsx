@@ -9,6 +9,7 @@ import { ConnectionStatus } from "./ConnectionStatus";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { ReadyState } from "react-use-websocket";
+import { SessionProvider } from "next-auth/react";
 export default function ChatInterface(props: ChatInterfaceProps) {
   const [inputMessage, setInputMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,41 +23,61 @@ export default function ChatInterface(props: ChatInterfaceProps) {
     connectionId: undefined,
     analyserId: undefined,
   });
+
   // ${props.userId}-${sessionId}
-  const { isConnected, send,query, on, subscribe } = useWebSocket(
+  const { isConnected, send, query, on,emit } = useWebSocket(
       `${process.env.NEXT_PUBLIC_PYTHON_WS_URL}/ws/query?token=da02204b-5832-42ab-b1a2-72aef8524c23`,
       {
         onOpen: () => console.log('Connected to chat'),
+        onMessage:(event) =>console.log('Messages from chat', event),
         onClose: () => console.log('Disconnected from chat'),
-        onError: (error) => {
-          console.error('WebSocket error:', error);
-          setErrorMessage('Connection error');
-        },
+        onError: (error) => console.error('WebSocket error:', error)
       }
   );
 
+  useEffect(() => {
+    console.log("Current messages:", messages);
+  }, [messages]);
+
   const handleChatMessage = useCallback((payload: any) => {
-    console.log("Received message from server:", payload);
-    if (payload.response && payload.sessionId && payload.sessionType) {
-      const newMessage: Message = {
-        id: `${payload.sessionType}-${Date.now()}`,
-        content: payload.response,
-        sender: "assistant",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, newMessage]);
-    } else {
-      console.error("Received unexpected message format from server:", payload);
+    console.log("Handling chat message:", payload);
+    try {
+      let messageData = payload;
+      if (typeof payload === 'string') {
+        messageData = JSON.parse(payload);
+      }
+
+      if (messageData.response) {
+        console.log("Adding assistant message:", messageData.response);
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            id: `assistant-${Date.now()}`,
+            content: messageData.response,
+            sender: "assistant",
+            timestamp: new Date(),
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error handling message:", error);
     }
   }, []);
 
+
   useEffect(() => {
-    console.log("Subscribing to 'chat_message' event");
-    (async ()=> {
-     return  on('', handleChatMessage)
-    })()
+    const unsubscribe = on('', handleChatMessage);
+    return () => {
+      if (unsubscribe) {
+        console.log("Cleaning up WebSocket subscription");
+        unsubscribe();
+      }
+    };
   }, [on, handleChatMessage]);
-  
+
+  useEffect(() => {
+    console.log("Current messages:", messages);
+  }, [messages]);
   
   const handleSendMessage = async () => {
     if (!inputMessage.trim() && currentSession.id) return;
@@ -72,7 +93,7 @@ export default function ChatInterface(props: ChatInterfaceProps) {
       setMessages(prev => [...prev, userMessage]);
 
       // Send through WebSocket
-      query({
+      emit({
         query: inputMessage,
         // sender: 'user',
         sessionId: sessionId,
@@ -119,19 +140,18 @@ export default function ChatInterface(props: ChatInterfaceProps) {
     }
   };
 
-
-  function sendMessageToChat(arg0: string, arg1: { url: string; filename: string; }) {
-        throw new Error("Function not implemented.");
-    }
+  
 
 
   return (
       <div className="relative flex h-screen flex-col">
+        <SessionProvider>
         <TopMenuBar />
-        <div className="relative flex flex-1 flex-col overflow-hidden">
+        </SessionProvider>
+        <div className="relative flex flex-1 flex-col overflow-hidden mt-4">
           <ConnectionStatus readyState={isConnected ? ReadyState.OPEN : ReadyState.CLOSED}/>
           <LoadingIndicator loading={loading}/>
-          <div className="space-y-8">
+          <div className="flex-1 overflow-y-auto space-y-8">
             {messages.map((message) => (
                 <MessageBubble
                     key={message.id}

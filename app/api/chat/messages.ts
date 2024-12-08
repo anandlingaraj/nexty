@@ -41,7 +41,7 @@ export async function POST(request: Request) {
             data: {
                 session_id,
                 user_input,
-                bot_response: 'Sample response', // Replace with actual bot response
+                bot_response: 'Sample response',
                 timestamp: new Date()
             }
         });

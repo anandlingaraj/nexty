@@ -32,33 +32,33 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       <div className="border-t p-4">
         <div className="relative rounded-lg border bg-background">
           {/* Model and Style Selectors */}
-          <div className="flex items-center gap-2 border-b px-3 py-2">
-            <Select defaultValue="claude-3">
-              <SelectTrigger className="w-[200px] border-0">
-                <SelectValue placeholder="Select Model" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="claude-3">Adam</SelectItem>
-                <SelectItem value="claude-2">Eve</SelectItem>
-              </SelectContent>
-            </Select>
+          {/*<div className="flex items-center gap-2 border-b px-3 py-2">*/}
+          {/*  <Select defaultValue="claude-3">*/}
+          {/*    <SelectTrigger className="w-[200px] border-0">*/}
+          {/*      <SelectValue placeholder="Select Model" />*/}
+          {/*    </SelectTrigger>*/}
+          {/*    <SelectContent>*/}
+          {/*      <SelectItem value="claude-3">Adam</SelectItem>*/}
+          {/*      <SelectItem value="claude-2">Eve</SelectItem>*/}
+          {/*    </SelectContent>*/}
+          {/*  </Select>*/}
 
-            <Separator orientation="vertical" className="h-6" />
+          {/*  <Separator orientation="vertical" className="h-6" />*/}
 
-            <Select defaultValue="normal">
-              <SelectTrigger className="w-[150px] border-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">Choose style</span>
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="normal">Normal</SelectItem>
-                <SelectItem value="creative">Creative</SelectItem>
-                <SelectItem value="precise">Precise</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/*  <Select defaultValue="normal">*/}
+          {/*    <SelectTrigger className="w-[150px] border-0">*/}
+          {/*      <div className="flex items-center gap-2">*/}
+          {/*        <span className="text-muted-foreground">Choose style</span>*/}
+          {/*        <ChevronDown className="h-4 w-4" />*/}
+          {/*      </div>*/}
+          {/*    </SelectTrigger>*/}
+          {/*    <SelectContent>*/}
+          {/*      <SelectItem value="normal">Normal</SelectItem>*/}
+          {/*      <SelectItem value="creative">Creative</SelectItem>*/}
+          {/*      <SelectItem value="precise">Precise</SelectItem>*/}
+          {/*    </SelectContent>*/}
+          {/*  </Select>*/}
+          {/*</div>*/}
 
           {/* Message Input */}
           <Textarea

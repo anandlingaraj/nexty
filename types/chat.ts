@@ -44,6 +44,7 @@ export interface WebSocketOptions {
     heartbeatInterval?: number;
     onOpen?: (event: WebSocketEventMap['open']) => void;
     onClose?: (event: WebSocketEventMap['close']) => void;
+    onMessage?: (event: WebSocketEventMap['message']) => void;
     onError?: (event: WebSocketEventMap['error']) => void;
     protocols?: string | string[];
 }

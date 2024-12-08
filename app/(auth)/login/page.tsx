@@ -11,7 +11,7 @@ import { Icons } from "@/components/ui/icons";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { NextPage } from 'next'
-import Link from 'next/link';
+
 const Page: NextPage = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState({
@@ -51,8 +51,8 @@ const Page: NextPage = () => {
         setIsLoading(true);
 
         try {
-            // First attempt credentials login
-            const result = await signIn("credentials", {
+
+            const result = await signIn("azure-ad-b2c-ropc", {
                 email: formData.email,
                 password: formData.password,
                 redirect: false,
@@ -79,19 +79,21 @@ const Page: NextPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4">
+        <div
+            className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-background p-4">
             <div className="relative w-full max-w-md space-y-8">
-                <div className="absolute inset-0 -z-10 bg-white/50 shadow-xl shadow-indigo-500/10 rounded-2xl blur-2xl" />
+                <div className="absolute inset-0 -z-10 bg-card/50 shadow-xl shadow-primary/10 rounded-2xl blur-2xl"/>
 
-                <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl">
+
+                <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-xl">
                     <CardHeader className="space-y-1">
                         <div className="flex items-center justify-center mb-4">
-                            <Icons.logo className="h-12 w-12 text-indigo-600" />
+                            <Icons.logo className="h-12 w-12 text-primary" />
                         </div>
-                        <CardTitle className="text-2xl font-bold text-center text-gray-900">
+                        <CardTitle className="text-2xl font-bold text-center">
                             Welcome back
                         </CardTitle>
-                        <CardDescription className="text-center text-gray-600">
+                        <CardDescription className="text-center">
                             Sign in to your account to continue
                         </CardDescription>
                     </CardHeader>
@@ -105,25 +107,26 @@ const Page: NextPage = () => {
                                 className="gap-2"
                             >
                                 {isLoading ? (
-                                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
                                 ) : (
-                                    <Icons.google className="mr-2 h-4 w-4" />
+                                    <Icons.google className="mr-2 h-4 w-4"/>
                                 )}
                                 Continue with OIDC
                             </Button>
 
+
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t" />
+                                    <span className="w-full border-t"/>
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-white px-2 text-gray-500">
+                                    <span className="bg-background px-2 text-muted-foreground">
                                         Or continue with
                                     </span>
                                 </div>
                             </div>
-
                             <form onSubmit={onSubmit} className="space-y-4">
+                                {/* Form fields remain the same but use theme-aware styling */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="email">Email</Label>
                                     <Input
@@ -131,7 +134,7 @@ const Page: NextPage = () => {
                                         placeholder="name@example.com"
                                         type="email"
                                         value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
                                         autoCapitalize="none"
                                         autoComplete="email"
                                         autoCorrect="off"
@@ -145,7 +148,7 @@ const Page: NextPage = () => {
                                         id="password"
                                         type="password"
                                         value={formData.password}
-                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, password: e.target.value})}
                                         autoCapitalize="none"
                                         autoComplete="current-password"
                                         disabled={isLoading}
@@ -158,7 +161,7 @@ const Page: NextPage = () => {
                                     className="w-full"
                                 >
                                     {isLoading && (
-                                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
                                     )}
                                     Sign In
                                 </Button>
@@ -166,12 +169,12 @@ const Page: NextPage = () => {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4">
-                        <div className="text-sm text-gray-500 text-center">
+                        <div className="text-sm text-muted-foreground text-center">
                             Don't have an account?{" "}
                             <Button
-                                variant={"ghost"}
+                                variant="ghost"
                                 onClick={handleRegisterClick}
-                                className="text-indigo-600 hover:text-indigo-500 font-medium"
+                                className="text-primary hover:text-primary/90 font-medium"
                             >
                                 Sign up
                             </Button>
