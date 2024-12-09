@@ -179,7 +179,7 @@ export function UserTable({ users, onDeleteAction, onUpdateAction }: UserTablePr
 
         {/* Edit Dialog */}
         <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
-            <DialogContent>
+            <DialogContent aria-describedby={``}>
                 <DialogHeader>
                     <DialogTitle>Edit User</DialogTitle>
                 </DialogHeader>
@@ -263,7 +263,7 @@ export function UserTable({ users, onDeleteAction, onUpdateAction }: UserTablePr
         </Dialog>
         {/* Delete Confirmation Dialog */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <DialogContent>
+            <DialogContent aria-describedby={``}>
                 <DialogHeader>
                     <DialogTitle>Confirm Deletion</DialogTitle>
                 </DialogHeader>

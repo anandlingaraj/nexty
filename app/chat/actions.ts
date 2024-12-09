@@ -1,4 +1,4 @@
-// app/actions.ts
+//app/chat/actions.ts
 'use server';
 
 import { ConversationType, Message } from '@/types/chat';

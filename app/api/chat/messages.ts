@@ -1,9 +1,10 @@
+//app/api/chat/messages.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const sessionId = searchParams.get('sessionId');
+    const sessionId = searchParams.get('id');
 
     if (!sessionId) {
         return NextResponse.json(

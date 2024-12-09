@@ -51,7 +51,7 @@ const PasswordChangeForm = () => {
     setNewPassword(password);
   };
 
-  const handleSubmit = async (e: Event) => {
+  const handleSubmit = async (e:  React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -82,7 +82,7 @@ const PasswordChangeForm = () => {
   return (
     <Card className="w-full max-w-md">
       <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e)=>handleSubmit(e)} className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">New Password</label>
             <div className="relative">

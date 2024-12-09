@@ -8,7 +8,7 @@ import type { Components } from "react-markdown";
 
 interface MessageContentProps {
     content: string;
-    sender: "user" | "assistant";
+    sender: "user" | "assistant" | "bot";
     onCopy?: (content: string) => void;
 }
 

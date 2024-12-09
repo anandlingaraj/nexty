@@ -158,7 +158,7 @@ export function FilterPresets({ onSelect, selected, onSaveCurrentFilter }: Filte
                                 Save Current Filter
                             </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent aria-describedby={``}>
                             <DialogHeader>
                                 <DialogTitle>Save Filter Preset</DialogTitle>
                                 <DialogDescription>

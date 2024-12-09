@@ -5,21 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86613047-f1d5-4918-b02c-18a7494905b1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/api/login-history/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/login-history.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/types/login-history.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/chat/messages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/chat/messages.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/chat/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/chat/[id]/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/chat/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/chat/actions.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/chat/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/chat/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/chat/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/chat/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/admin/logs/FilterPresets.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/admin/logs/FilterPresets.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/admin/sidebar/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/admin/sidebar/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/admin/users/components/user-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/admin/users/components/user-table.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/chat/ChatInterface.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/ChatInterface.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/chat/ChatSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/ChatSidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/layout/top-menubar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/layout/top-menubar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/profile/AccountSettings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/profile/AccountSettings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/chat/MessageBubble.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/MessageBubble.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/chat/MessageContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/MessageContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/popup-menu/user-menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/popup-menu/user-menu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/profile/PasswordChangeForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/profile/PasswordChangeForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/auth/auth-options.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/auth/auth-options.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/chat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/chat.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/types/next-auth.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/next-auth.d.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,7 +168,7 @@
       <workItem from="1733296588959" duration="21765000" />
       <workItem from="1733447683914" duration="8374000" />
       <workItem from="1733470351478" duration="11270000" />
-      <workItem from="1733550076326" duration="42106000" />
+      <workItem from="1733550076326" duration="54078000" />
     </task>
     <servers />
   </component>

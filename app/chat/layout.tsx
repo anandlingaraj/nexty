@@ -8,11 +8,11 @@ export default function ChatLayout({
   children: React.ReactNode;
 }) {
   return (
-        <SessionProvider>
-            <div className="flex min-h-screen bg-background">
-              <ChatSidebar />
-              <main className="flex flex-1 flex-col pl-72">{children}</main>
-            </div>
-        </SessionProvider>
+    <SessionProvider>
+      <div className="flex min-h-screen bg-background">
+        <ChatSidebar />
+        <main className="flex flex-1 flex-col pl-72">{children}</main>
+      </div>
+    </SessionProvider>
   );
 }

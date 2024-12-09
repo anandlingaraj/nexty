@@ -1,20 +1,22 @@
+// app/chat/[id]/page.tsx
 'use client';
-import { usePathname, useSearchParams } from 'next/navigation';
-import ChatInterface from "@/components/chat/ChatInterface";
+
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import ChatInterface from "@/components/chat/ChatInterface";
 import { getSessionMessagesAction } from '../actions';
+import { CustomSession } from '../page';
+
 
 export default function ChatSessionPage() {
-    const pathname = usePathname();
     const params = useParams();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession() as {
+        data: CustomSession | null;
+        status: "loading" | "authenticated" | "unauthenticated"
+    };
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    // const searchParams = useSearchParams();
-    const parts = pathname.split('/');
-    const id = parts[parts.length - 1];
 
     useEffect(() => {
         const loadInitialMessages = async () => {
@@ -36,10 +38,12 @@ export default function ChatSessionPage() {
             }
         };
 
-        loadInitialMessages();
-    }, [params.id, session?.user?.id]);
+        if (status !== 'loading') {
+            loadInitialMessages();
+        }
+    }, [params.id, session?.user?.id, status]);
 
-    if (loading) {
+    if (status === 'loading' || loading) {
         return (
             <div className="flex-1 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
@@ -54,18 +58,21 @@ export default function ChatSessionPage() {
             </div>
         );
     }
+
+    if (!session) {
+        return (
+            <div className="flex-1 flex items-center justify-center">
+                Please sign in to access chat
+            </div>
+        );
+    }
+
     return (
         <div className="flex-1">
             <ChatInterface
                 chatId={params.id as string}
-                userId={session?.user?.id || ''}
+                userId={session.user.id}
             />
         </div>
     );
-
-    // return (
-    //     <div className="flex h-screen max-h-screen flex-col p-4">
-    //         {id && <ChatInterface chatId={id} userId={userId} />}
-    //     </div>
-    // );
 }

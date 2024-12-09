@@ -11,6 +11,7 @@ import {
     LayoutDashboard,
     Files,
     AlertCircle,
+    LogOut,
     BarChart3,
     Lock,
     MessageSquare,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 const sidebarNavItems = [
     {
@@ -86,15 +88,18 @@ function SidebarNav() {
                             asChild
                         >
                             <Link href={item.href}>
-                                <Icon className="h-4 w-4" />
+                                <Icon className="h-4 w-4"/>
                                 {item.title}
                             </Link>
                         </Button>
                     );
                 })}
-            </div>
+                <div className="space-y-1 p-2">
+                    <LogoutButton/>
+                </div>
+                </div>
         </ScrollArea>
-    );
+);
 }
 
 export default SidebarNav;

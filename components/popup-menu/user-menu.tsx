@@ -33,6 +33,7 @@ import {
     ChevronDown
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { LogoutButton } from '../auth/logout-button';
 
 export default function UserMenu() {
     const email = "anand.lingaraj@gmail.com";
@@ -106,9 +107,7 @@ export default function UserMenu() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <Button variant="ghost" className="text-red-600 hover:text-red-600 hover:bg-red-100">
-                            Log Out
-                        </Button>
+                       <LogoutButton/>
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 border-t p-4">

@@ -1,12 +1,33 @@
 // app/lib/auth.ts
 
 import { jwtDecode } from "jwt-decode";
+import { DefaultSession } from "next-auth";
 import AzureADB2C from "next-auth/providers/azure-ad-b2c"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 const B2C_TENANT = process.env.AZURE_AD_B2C_TENANT!;
 const CLIENT_ID = process.env.AZURE_AD_B2C_CLIENT_ID!;
 const POLICY_NAME = process.env.AZURE_AD_B2C_POLICY_NAME!;
+
+declare module "next-auth" {
+    interface Session {
+        accessToken?: string;
+        idToken?: string;
+        user: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+            roles?: string[];
+        } & DefaultSession["user"];
+    }
+
+    interface User {
+        accessToken?: string;
+        idToken?: string;
+        roles?: string[];
+    }
+}
 export const authOptions = {
     providers: [
         CredentialsProvider({
@@ -59,14 +80,19 @@ export const authOptions = {
                         console.error('Auth error:', data);
                         throw new Error(data.error_description || 'Authentication failed');
                     }
-                    const decodedToken = jwtDecode(data.id_token) as any;
+                    const decodedIDToken = jwtDecode(data.id_token) as any;
+                    const decodedAccessToken = jwtDecode(data.access_token) as any;
+                    // console.error('decodedIDToken>>>>>>>>>>>', decodedIDToken);
+                    // console.error('decodedACCESSToken>>>>>>>>>>>', decodedAccessToken);
                     return {
-                        id: data.oid || 'unknown',
+                        id: decodedIDToken.oid || decodedAccessToken.oid,
                         email: credentials?.email,
-                        name: decodedToken.name,
+                        name: decodedIDToken.name,
                         accessToken: data.access_token,
+                        firstName: decodedIDToken.given_name,
+                        lastName: decodedIDToken.family_name,
                         idToken: data.id_token,
-                        roles: decodedToken.roles || [],
+                        roles: decodedIDToken.roles || [],
                     };
                 } catch (error) {
                     console.error('ROPC authentication error:', error);
@@ -81,11 +107,14 @@ export const authOptions = {
         })
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, profile }) {
             if (user) {
                 token.accessToken = user.accessToken;
                 token.idToken = user.idToken;
                 token.roles = user.roles;
+                token.name = user.name;
+                token.id = user.id;
+                console.log('Token ID:>>>>>>>>>>>>>>>>>>>', token.id);
             }
             return token;
         },
@@ -93,6 +122,10 @@ export const authOptions = {
             session.accessToken = token.accessToken;
             session.idToken = token.idToken;
             session.user.roles = token.roles as string[]
+            if (session.user && token.id) {
+                session.user.id = token.id as string;
+            }
+            console.log('session user ID:', session.user.id);
             return session;
         }
     },
