@@ -31,7 +31,7 @@ interface LogEntry {
     timestamp: Date;
     level: 'info' | 'warning' | 'error';
     action: string;
-    user: string;
+    user: { email: string; name: string } | string;
     resource: string;
     details: string;
     metadata: Record<string, any>;
@@ -86,7 +86,9 @@ export function LogListView({ logs }: LogListViewProps) {
                                     <TableCell>{format(log.timestamp, 'PPpp')}</TableCell>
                                     <TableCell>{getLevelBadge(log.level)}</TableCell>
                                     <TableCell>{log.action}</TableCell>
-                                    <TableCell>{log.user}</TableCell>
+                                    <TableCell>
+                                        {typeof log.user === 'string' ? log.user : log.user.email}
+                                    </TableCell>
                                     <TableCell>{log.resource}</TableCell>
                                     <TableCell className="max-w-[300px] truncate">{log.details}</TableCell>
                                     <TableCell>
@@ -135,10 +137,10 @@ export function LogListView({ logs }: LogListViewProps) {
                                         <div className="space-y-2">
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">User:</span>
-                                                <span>{selectedLog.user}</span>
+                                                <span>{typeof selectedLog.user === 'string' ? selectedLog.user : selectedLog.user.email}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-muted-foreground">IP:</span>
+                                            <span className="text-muted-foreground">IP:</span>
                                                 <span>{selectedLog.metadata.ip}</span>
                                             </div>
                                             <div className="flex justify-between">

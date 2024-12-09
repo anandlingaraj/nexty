@@ -5,9 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86613047-f1d5-4918-b02c-18a7494905b1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/lib/log-utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/logger.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/logs/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/logs/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/logs/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/logs/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/users/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/users/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/chat/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/chat/actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/admin/logs/ListView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/admin/logs/ListView.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/auth/auth-options.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/auth/auth-options.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/chat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/chat.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +160,7 @@
       <workItem from="1733296588959" duration="21765000" />
       <workItem from="1733447683914" duration="8374000" />
       <workItem from="1733470351478" duration="11270000" />
-      <workItem from="1733550076326" duration="54887000" />
+      <workItem from="1733550076326" duration="60039000" />
     </task>
     <servers />
   </component>

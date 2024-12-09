@@ -4,6 +4,8 @@ import { jwtDecode } from "jwt-decode";
 import { DefaultSession } from "next-auth";
 import AzureADB2C from "next-auth/providers/azure-ad-b2c"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { createLog } from "../logger";
+import { prisma } from "../prisma";
 
 const B2C_TENANT = process.env.AZURE_AD_B2C_TENANT!;
 const CLIENT_ID = process.env.AZURE_AD_B2C_CLIENT_ID!;
@@ -114,6 +116,33 @@ export const authOptions = {
                 token.name = user.name;
                 token.id = user.id;
                 console.log('Token ID:>>>>>>>>>>>>>>>>>>>', token.id);
+                try {
+                    const dbUser = await prisma.user.upsert({
+                        where: { id: user.id },
+                        update: {
+                            email: user.email || "",
+                            name: user.name || ""
+                        },
+                        create: {
+                            id: user.id,
+                            email: user.email || "",
+                            name: user.name || ""
+                        }
+                    });
+
+                    // Then create log
+                    await createLog({
+                        level: 'info',
+                        action: 'USER_LOGIN',
+                        details: 'User logged in successfully',
+                        userId: dbUser.id,
+                        resource: 'auth',
+                        metadata: { email: user.email || "" }
+                    });
+
+                } catch (error) {
+                    console.error('Error creating user/log:', error);
+                }
             }
             return token;
         },

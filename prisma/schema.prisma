@@ -99,6 +99,10 @@ model Log {
   resource  String
   metadata  Json?
   timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([level])
+  @@index([userId])
 }
 
 model Document {

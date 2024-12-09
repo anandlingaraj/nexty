@@ -20,11 +20,11 @@ export interface Conversation {
 }
 
 export interface Message {
-    id: string;
+    id?: string;
     content: string;
     text?: string;
-    sender: "user" | "assistant";
-    timestamp: Date;
+    sender: "user" | "assistant" | "bot";
+    timestamp?: Date;
 }
 
 export interface WebSocketMessage {

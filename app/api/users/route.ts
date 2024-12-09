@@ -1,8 +1,24 @@
 // app/api/users/route.ts
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client';
-
+import { Client } from '@microsoft/microsoft-graph-client';
+import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
+import { ClientSecretCredential } from '@azure/identity'
 const prisma = new PrismaClient();
+
+const B2C_TENANT_ID = process.env.AZURE_AD_B2C_TENANT_ID!;
+const CLIENT_ID = process.env.MS_GRAPH_CLIENT_ID!;
+const CLIENT_SECRET = process.env.MS_GRAPH_CLIENT_SECRET!;
+
+const credential = () => new ClientSecretCredential(B2C_TENANT_ID, CLIENT_ID, CLIENT_SECRET);
+
+const authProvider =() => new TokenCredentialAuthenticationProvider(credential(), {
+    scopes: ['https://graph.microsoft.com/.default'],
+});
+
+const graphClient = () => authProvider()
+    Client.initWithMiddleware({ authProvider: authProvider() });
+
 export async function GET() {
     try {
         const users = await prisma.user.findMany({
@@ -46,6 +62,19 @@ export async function POST(request: Request) {
                 createdAt: new Date()
             },
         });
+        const GraphUser = {
+            accountEnabled: true,
+            displayName: name,
+            mailNickname: name,
+            userPrincipalName:  email || `${name}@hubseven.onmicrosoft.com`,
+            passwordProfile: {
+                forceChangePasswordNextSignIn: false,
+                password: 'xWwvJ]6NMw+bWH-d'
+            }
+        };
+
+        await graphClient().api('/users').post(GraphUser);
+
         return NextResponse.json(newUser,{ status: 201 });
     } catch (error) {
         console.error('API Error:', error);

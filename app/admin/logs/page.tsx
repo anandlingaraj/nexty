@@ -62,11 +62,49 @@ export default function LogsPage() {
     const [viewMode, setViewMode] = useState<'list' | 'correlation' | 'analytics'>('list');
     const [isRealtime, setIsRealtime] = useState(false);
     const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
-    // WebSocket connection for real-time logs
-    const socket = useWebSocket('wss://your-websocket-url', {
+    const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+
+    //WebSocket connection for real-time logs
+    const socket = useWebSocket('wss://localhost:3000', {
         onOpen: () => console.log('Connected to log stream'),
         reconnectAttempts: 3,
     });
+
+    const fetchLogs = async () => {
+        try {
+            setIsLoading(true);
+            const params = new URLSearchParams({
+                page: page.toString(),
+                limit: '50',
+                ...(filters.level && { level: filters.level }),
+                ...(filters.action && { action: filters.action }),
+                ...(dateRange && {
+                    timeRange: JSON.stringify({
+                        from: dateRange.from,
+                        to: dateRange.to
+                    })
+                })
+            });
+
+            const response = await fetch(`/api/logs?${params}`);
+            const data = await response.json();
+
+            setLogs(data.logs);
+            setTotalPages(data.pages);
+        } catch (error) {
+            console.error('Error fetching logs:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!isRealtime) {
+            fetchLogs();
+        }
+    }, [page, filters, dateRange, isRealtime]);
 
     useEffect(() => {
         if (isRealtime) {
@@ -76,7 +114,6 @@ export default function LogsPage() {
             return () => unsubscribe();
         }
     }, [isRealtime, socket]);
-
     const handlePresetSelect = (preset: FilterPreset) => {
         setActivePresetId(preset.id);
         setFilters(preset.filters);
@@ -84,7 +121,9 @@ export default function LogsPage() {
 
     const getCurrentFilters = () => filters;
 
-
+    if (isLoading) {
+        return <div className="flex justify-center p-4">Loading...</div>;
+    }
 
     // Group logs by correlation ID
     const correlatedLogs = logs.reduce((acc, log) => {
@@ -263,10 +302,18 @@ export default function LogsPage() {
                                 <CardTitle>Time Range</CardTitle>
                                 <CardDescription>
                                     {logs.length > 0 ? format(
-                                        new Date(Math.min(...logs.map(l => l.timestamp.getTime()))),
+                                        new Date(Math.min(...logs.map(l =>
+                                            new Date(l.timestamp).getTime()
+                                        ))),
                                         'Pp'
                                     ) : 'No logs'}
                                 </CardDescription>
+                                {/*<CardDescription>*/}
+                                {/*    {logs.length > 0 ? format(*/}
+                                {/*        new Date(Math.min(...logs.map(l => l.timestamp.getTime()))),*/}
+                                {/*        'Pp'*/}
+                                {/*    ) : 'No logs'}*/}
+                                {/*</CardDescription>*/}
                             </CardHeader>
                         </Card>
                     </div>

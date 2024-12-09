@@ -53,7 +53,7 @@ export async function updateChatAction(id: string, data: { title?: string; lastM
     }
 }
 
-export async function deleteChatAction(id: string) {
+export async function deleteChatAction(id: number) {
     try {
         await prisma.conversation_memory.delete({
             where: { id }
@@ -69,30 +69,60 @@ export async function getSessionMessagesAction(
     sessionType: ConversationType
 ): Promise<Message[]> {
     try {
-        console.log("GRAB SESSUIB", userId, sessionId, sessionType)
-        const table = sessionType === 'default' ? 'conversation_memory' :
-            sessionType === 'analyser' ? 'analyser_conversation_memory' :
-                'web_analyser_conversation_memory';
+        let messages;
 
-        const messages = await prisma[table].findMany({
-            where: {
-                session_id: sessionId,
-                user_id: userId
-            },
-            select: {
-                user_input: true,
-                bot_response: true,
-                timestamp: true
-            },
-            orderBy: {
-                timestamp: 'asc'
-            }
-        });
+        if (sessionType === 'default') {
+            messages = await prisma.conversation_memory.findMany({
+                where: {
+                    session_id: sessionId,
+                    user_id: userId
+                },
+                select: {
+                    user_input: true,
+                    bot_response: true,
+                    timestamp: true
+                },
+                orderBy: {
+                    timestamp: 'asc'
+                }
+            });
+        } else if (sessionType === 'analyser') {
+            messages = await prisma.analyser_conversation_memory.findMany({
+                // same options as above
+                where: {
+                    session_id: sessionId,
+                    user_id: userId
+                },
+                select: {
+                    user_input: true,
+                    bot_response: true,
+                    timestamp: true
+                },
+                orderBy: {
+                    timestamp: 'asc'
+                }
+            });
+        } else {
+            messages = await prisma.web_analyser_conversation_memory.findMany({
+                // same options as above
+                where: {
+                    session_id: sessionId,
+                    user_id: userId
+                },
+                select: {
+                    user_input: true,
+                    bot_response: true,
+                    timestamp: true
+                },
+                orderBy: {
+                    timestamp: 'asc'
+                }
+            });
+        }
 
-        // Transform the data into the required format
-        return messages.flatMap((msg: { user_input: any; bot_response: any; }) => ([
-            { sender: 'user', text: msg.user_input },
-            { sender: 'bot', text: msg.bot_response }
+        return messages.flatMap((msg) => ([
+            { sender: 'user', content: msg.user_input, timestamp: msg.timestamp  } as Message,
+            { sender: 'bot', content: msg.bot_response, timestamp: msg.timestamp  } as Message
         ]));
 
     } catch (error) {
