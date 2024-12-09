@@ -82,8 +82,7 @@ export const authOptions = {
                     }
                     const decodedIDToken = jwtDecode(data.id_token) as any;
                     const decodedAccessToken = jwtDecode(data.access_token) as any;
-                    // console.error('decodedIDToken>>>>>>>>>>>', decodedIDToken);
-                    // console.error('decodedACCESSToken>>>>>>>>>>>', decodedAccessToken);
+                
                     return {
                         id: decodedIDToken.oid || decodedAccessToken.oid,
                         email: credentials?.email,
@@ -131,7 +130,10 @@ export const authOptions = {
     },
     events: {
         async signOut({session, token}) {
-
+            session.accessToken = "";
+            session.idToken = "";
+            session.user.roles = "";
+            return session;
         },
     }
 }
