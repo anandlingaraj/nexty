@@ -2,7 +2,8 @@
 import { useRef, useState } from "react";
 import { UploadButton } from "./UploadButton";
 import { FileInput } from "./FileInput";
-
+import { Button } from '@/components/ui/button';
+import { GDriveUpload } from "./GDriveUpload";
 interface UploadControlsProps {
   userId: string;
   onFileUpload: (files: FileList) => void;
@@ -101,6 +102,9 @@ export const UploadControls: React.FC<UploadControlsProps> = ({
         onClick={() => fileInputRef.current?.click()}
         tooltip="Upload File"
       />
+     <GDriveUpload onClick={() => fileInputRef.current?.click()}
+                   tooltip="GDrive Docs"
+     />
 
       {uploading && (
         <div className="text-sm text-muted-foreground">Uploading...</div>

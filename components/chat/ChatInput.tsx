@@ -10,7 +10,8 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { UploadControls } from "./UploadControls";
-
+import { Button } from '@/components/ui/button';
+import { Cloud } from "lucide-react";
 interface ChatInputProps {
   value: string;
   userId: string;
@@ -20,6 +21,8 @@ interface ChatInputProps {
   onError?: (error: string) => void;
 }
 
+
+
 export const ChatInput: React.FC<ChatInputProps> = ({
                                                       value,
                                                       userId,
@@ -28,6 +31,18 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                                                       onFileUpload,
                                                       onError
                                                     }) => {
+
+    const GDriveButton = () => {
+        return (
+            <Button
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+            >
+                <Cloud className="w-5 h-5" />
+                <span>Open in Google Drive</span>
+            </Button>
+        );
+    };
+
   return (
       <div className="border-t p-4">
         <div className="relative rounded-lg border bg-background">
@@ -82,12 +97,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onFileUpload={onFileUpload}
                 onError={onError}
             />
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Use</span>
-              <kbd className="rounded border px-2 py-0.5">shift + return</kbd>
-              <span>for new line</span>
-            </div>
+              
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>Use</span>
+                  <kbd className="rounded border px-2 py-0.5">shift + return</kbd>
+                  <span>for new line</span>
+              </div>
           </div>
         </div>
       </div>

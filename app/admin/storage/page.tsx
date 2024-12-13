@@ -1,18 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StorageTable } from "@/components/admin/storage/storage-table";
 import { AddStorageForm } from "@/components/admin/storage/add-storage-form";
 import { StorageProvider } from "./types"
+import {SessionProvider} from '@/components/providers/SessionProvider'
+import { fetchStorageAction } from './actions';
 
 export default function StorageConfigPage() {
     const [providers, setProviders] = useState<StorageProvider[]>([]);
-
+    useEffect(() => {
+        (async ()=>{
+            await fetchStorageAction().then(res=>setProviders(res))
+        })()
+    }, []);
     const addProvider = (provider: StorageProvider) => {
         setProviders([...providers, { ...provider, id: Date.now().toString() }]);
     };
+
+    const onUpdate=()=>{}
 
     return (
         <div className="container mx-auto py-8">
@@ -30,12 +38,13 @@ export default function StorageConfigPage() {
                             <CardTitle>Configured Storage Sources</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <StorageTable providers={providers} />
+                            <StorageTable providers={providers} onUpdate={onUpdate}/>
                         </CardContent>
                     </Card>
                 </TabsContent>
 
                 <TabsContent value="add">
+                    <SessionProvider>
                     <Card>
                         <CardHeader>
                             <CardTitle>Add Storage Source</CardTitle>
@@ -44,6 +53,7 @@ export default function StorageConfigPage() {
                             <AddStorageForm onSubmit={addProvider} />
                         </CardContent>
                     </Card>
+                    </SessionProvider>
                 </TabsContent>
             </Tabs>
         </div>

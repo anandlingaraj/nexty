@@ -47,6 +47,9 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { updateUserAction } from "@/app/admin/users/actions";
+import { createLog } from "@/lib/logger-api";
+import { useSession } from "next-auth/react";
+import { CustomSession } from "@/app/chat/page";
 interface UserTableProps {
   users: User[];
     onDeleteAction: (id: string) => Promise<void>;
@@ -63,7 +66,10 @@ export function UserTable({ users, onDeleteAction, onUpdateAction }: UserTablePr
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
-
+    const { data: session, status } = useSession() as {
+        data: CustomSession | null;
+        status: "loading" | "authenticated" | "unauthenticated"
+    };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -96,13 +102,29 @@ export function UserTable({ users, onDeleteAction, onUpdateAction }: UserTablePr
 
     try {
       await onDeleteAction(userToDelete);
+        await createLog({
+            level: 'info',
+            action: 'USER_DELETE',
+            details: `User deleted`,
+            userId: session!.user.id,
+            resource: 'user',
+            metadata: { deletedUserId: "" }
+        });
         await onUpdateAction();
       toast({
         title: "Success",
         description: "User deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.log("Error deleting user:", error);
+        await createLog({
+            level: 'error',
+            action: 'USER_DELETE_FAILED',
+            details: `Failed to delete user`,
+            userId: session!.user.id,
+            resource: 'user',
+            metadata: { error: error.message }
+        });
       toast({
         title: "Error",
         description: "Failed to delete user",

@@ -35,3 +35,13 @@ export async function GET(req: NextRequest) {
         pages: Math.ceil(total / limit)
     });
 }
+
+export async function POST(request: Request) {
+    const logData = await request.json();
+
+    const log = await prisma.log.create({
+        data: logData
+    });
+
+    return Response.json(log);
+}

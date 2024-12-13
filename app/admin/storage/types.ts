@@ -4,8 +4,10 @@ export interface StorageProvider {
     type: 'S3' | 'AZURE_BLOB' | 'GCP_STORAGE';
     credentials: Record<string, string>;
     isActive: boolean;
-    createdAt: Date;
+    createdAt?: Date;
+    created_at?: Date;
     lastChecked?: Date;
+    user_id?: string;
     status: 'connected' | 'error' | 'unchecked';
 }
 

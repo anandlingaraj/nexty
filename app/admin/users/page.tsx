@@ -9,6 +9,7 @@ import { BulkUploadForm } from "@/components/admin/users/components/bulk-upload-
 import { User } from "./types";
 import { deleteUserAction,createUserAction, fetchUsersAction } from './actions';
 import { toast } from '@/hooks/use-toast';
+import { SessionProvider } from '@/components/providers/SessionProvider';
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
 
@@ -66,7 +67,7 @@ export default function AdminUsersPage() {
     };
 
 
-    return (
+    return (<SessionProvider>
         <div className="container mx-auto py-8">
             <h1 className="mb-8 text-3xl font-bold">User Management</h1>
 
@@ -117,5 +118,6 @@ export default function AdminUsersPage() {
                 </TabsContent>
             </Tabs>
         </div>
+        </SessionProvider>
     );
 }

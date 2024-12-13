@@ -20,6 +20,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User } from "@/app/admin/users/types";
+import { createLog } from "@/lib/logger";
+import { useSession } from "next-auth/react";
+import { CustomSession } from "@/app/chat/page";
 
 const formSchema = z.object({
     name: z.string().min(2),
@@ -33,6 +36,10 @@ interface CreateUserFormProps {
 }
 
 export function CreateUserForm({ onSubmit }: CreateUserFormProps) {
+    const { data: session, status } = useSession() as {
+        data: CustomSession | null;
+        status: "loading" | "authenticated" | "unauthenticated"
+    };
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -43,13 +50,37 @@ export function CreateUserForm({ onSubmit }: CreateUserFormProps) {
         },
     });
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        onSubmit({
-            ...values,
-            id: '',
-            createdAt: new Date(),
-        });
-        form.reset();
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            onSubmit({
+                ...values,
+                id: '',
+                createdAt: new Date(),
+            });
+            await createLog({
+                level: 'info',
+                action: 'USER_CREATE',
+                details: `User created successfully: ${values.email}`,
+                userId: session!.user.id,
+                resource: 'user',
+                metadata: {
+                    createdUser: values.email,
+                    role: values.role,
+                    status: values.status
+                }
+            });
+
+            form.reset();
+        }catch (error){
+            await createLog({
+                level: 'error',
+                action: 'USER_CREATE_FAILED',
+                details: `Failed to create user: ${values.email}`,
+                userId: session!.user.id,
+                resource: 'user',
+                metadata: { error: error.message }
+            });
+        }
     };
 
     return (

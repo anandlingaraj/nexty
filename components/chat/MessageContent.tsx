@@ -30,7 +30,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
 
-            if (inline) {
+            if (!children || inline) {
                 return (
                     <code className={className} {...props}>
                         {children}
@@ -73,10 +73,11 @@ export const MessageContent: React.FC<MessageContentProps> = ({
         h3({ children }) {
             return <h3 className="mb-4 text-xl font-semibold">{children}</h3>;
         },
-        p({ children , node}) {
-            const hasCodeBlock = node?.children?.some(
+        p({ children, node }) {
+            const hasCodeBlock = (node as any)?.children?.some(
                 (child: any) => child.type === 'code' && !child.inline
             );
+
             if (hasCodeBlock) {
                 return <>{children}</>;
             }
@@ -87,7 +88,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
 
     return (
         <Markdown
-            components={components}
+              components={components}
             remarkPlugins={[remarkGfm]}
             className="prose dark:prose-invert max-w-none"
         >
